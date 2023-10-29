@@ -33,27 +33,33 @@ const userSchema = new mongoose.Schema({
   },
   confirmPassword: {
     type: String,
-    required: [true, "Conform Password is required"],
+    required: [true, "Confirm Password is required"],
     validate: {
       //this only work on create and save !!
       validator: function (el) {
         return el === this.password
       },
-      message: "password and conform password are not the same"
+      message: "password and confirm password are not the same"
     }
   },
   passwordChangedAt: Date,
 
   passwordResetToken: String,
   passwordResetTokenExperies: String,
+  active: {
+    type: Boolean,
+    default: true,
+    select: false
+  }
 });
 
 userSchema.pre("save", async function (next) {
-  if (!this.isModified("password")) {
+  if (!this.isModified("password") || this.isNew) {
     return next()
   };
   this.password = await bcrypt.hash(this.password, 12);
   this.confirmPassword = undefined;
+  this.passwordChangedAt = Date.now() - 1000;
   next()
 });
 
@@ -80,6 +86,11 @@ userSchema.methods.createPasswordResetToken = async function (email) {
   this.passwordResetTokenExperies = Date.now() + 10 * 60 * 1000
   return resetToken
 }
+
+userSchema.pre(/^find/, function (next) {
+  this.find({ active: { $ne: false } })
+  next();
+})
 
 const User = mongoose.model('User', userSchema);
 
