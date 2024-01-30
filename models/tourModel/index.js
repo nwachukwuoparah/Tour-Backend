@@ -3,7 +3,6 @@ const slugify = require("slugify")
 const validator = require("validator")
 
 
-
 const tourSchema = new mongoose.Schema({
   name: {
     type: String,
@@ -50,7 +49,7 @@ const tourSchema = new mongoose.Schema({
     type: Number,
     validate: {
       validator: function (val) {
-        // t works on only create and not update
+        // to works on only create and not update
         return val < this.price
       },
       message: "Discount price ({VALUE}) should be below the regular price"
@@ -99,7 +98,6 @@ tourSchema.pre("save", function (next) {
 //   console.log("will save document")
 //   next();
 // })
-
 // tourSchema.post("save", function (doc, next) {
 //   console.log(doc)
 //   next();

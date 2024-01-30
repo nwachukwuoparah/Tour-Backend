@@ -16,8 +16,17 @@ const signToken = (id) => {
 };
 
 const createSentToken = (user, statusCode, res) => {
+  const token = signToken(user._id);
+  const cookieOptions = {
+    expires: new Date(
+      Date.now() + process.env.JWT_COOKIE_EXPIRES_IN * 24 * 60 * 60 * 1000
+    ),
+    httpOnly: true
+  };
 
-  const token = signToken(user._id)
+  if (process.env.NODE_ENV === "production") cookieOptions.secure = true
+
+  res.cookie("jwt", token, cookieOptions);
 
   res.status(statusCode).json({
     status: "success",
@@ -37,32 +46,24 @@ exports.signUp = catchAsync(async (req, res, next) => {
     passwordChangedAt: req.body.passwordChangedAt,
     role: req.body.role
   })
-
   createSentToken(newUser, 200, res)
   next()
 });
 
 exports.logIn = catchAsync(async (req, res, next) => {
-
   const { email, password } = req.body
-
   if (!email || !password) {
     return next(new AppError("Email and password is required", 404))
   };
-
   const user = await User.findOne({ email }).select("+password")
-
   if (!user || (!await user.correctPassword(password, user.password))) {
     return next(new AppError("Incorrect Email and password", 401))
   };
-
   const token = signToken(user._id)
-
   res.status(200).json({
     status: "success",
     token
   })
-
   next()
 });
 
@@ -77,7 +78,7 @@ exports.protect = catchAsync(async (req, res, next) => {
     token = req.headers.authorization.split(" ")[1]
   };
   if (!token) {
-    return next(new AppError("You are not logged in! log in to gain access ", 401))
+    return next(new AppError("You are not logged in! log in to gain access.", 401))
   };
   //verifidation
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
@@ -85,7 +86,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!currentUser) {
     return next(new AppError("User with this token does not exist.", 401))
   };
-  if (await currentUser.changedPassword(decoded.iat)) {
+  if (await currentUser.changedPassword(decoded.iat)) { 
     return next(new AppError("User recently changed password please login in again.", 401))
   };
   // Grant access to the protected route
@@ -111,14 +112,11 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     return next(new AppError("User with this email not found", 404))
   }
   const resetToken = await user.createPasswordResetToken()
-
   await user.save({ validateBeforeSave: false })
-
   //generate a random token and send it as an email
   const resetURL = `${req.protocol}://${req.get("host")}/api/v1/users/resetPassword/${resetToken}`
   const message = `Forgot your password? send a PATCH request with your new password and password 
   confirm to ${resetURL}.\n if you did not send this please igmore this email`
-
   try {
     await sendEmail({
       email: user.email,
@@ -167,7 +165,6 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
   createSentToken(user, 200, res)
 });
 
-
 exports.updatePassword = catchAsync(async (req, res, next) => {
 
   const user = await User.findById(req.user.id).select("+password")
@@ -186,6 +183,7 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
     status: "success",
     token
   })
-  
+
   next()
 })
+
