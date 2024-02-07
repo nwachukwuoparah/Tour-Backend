@@ -8,11 +8,15 @@ const {
   deleteTour,
   aliasTopTours,
   getTourStats,
-  getMontlyPlan
+  getMontlyPlan,
+  pushNotification
 } = require("../../controllers/tourController")
 
 const router = express.Router()
 // router.param("id", checkID)
+
+router.route("/push-notification")
+  .post(pushNotification)
 
 router.route("/monthly-plan/:year")
   .get(getMontlyPlan)

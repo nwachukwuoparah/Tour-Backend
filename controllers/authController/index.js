@@ -1,9 +1,9 @@
-const crypto = require("crypto")
-const { promisify } = require("util")
-const User = require("../../models/userModel")
-const catchAsync = require("../../utils/catchAsync")
-const jwt = require("jsonwebtoken")
-const AppError = require("../../utils/appError")
+const crypto = require("crypto");
+const { promisify } = require("util");
+const User = require("../../models/userModel");
+const catchAsync = require("../../utils/catchAsync");
+const jwt = require("jsonwebtoken");
+const AppError = require("../../utils/appError");
 const bcrypt = require("bcryptjs");
 const sendEmail = require("../../utils/sendEmail");
 
@@ -86,7 +86,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!currentUser) {
     return next(new AppError("User with this token does not exist.", 401))
   };
-  if (await currentUser.changedPassword(decoded.iat)) { 
+  if (await currentUser.changedPassword(decoded.iat)) {
     return next(new AppError("User recently changed password please login in again.", 401))
   };
   // Grant access to the protected route
@@ -129,7 +129,6 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
     await user.save({ validateBeforeSave: false });
     return new AppError(`There was an error sending Email to ${user.email} try again later`, 500)
   };
-
 
   res.status(200).json({
     status: "success",

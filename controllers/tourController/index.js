@@ -3,6 +3,9 @@ const Tour = require("../../models/tourModel")
 const APIFeatures = require("../../utils/apiFeatures")
 const catchAsync = require("../../utils/catchAsync")
 const AppError = require("../../utils/appError")
+const { Expo } = require('expo-server-sdk');
+const { log } = require("console")
+const expo = new Expo();
 
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
@@ -44,9 +47,36 @@ exports.getOneTour = catchAsync(async (req, res, next) => {
   })
 })
 
+exports.pushNotification = catchAsync(async (req, res, next) => {
+  const { notificationToken } = req.body
+  // Send notification
+  console.log(notificationToken);
+  const message = {
+    // expo local -  ExponentPushToken[M56cGsO6ZBhAMLmVna-kOQ]
+
+    to: `${notificationToken}`,
+    sound: 'default',
+    title: 'New Notification',
+    body: 'Tour created sucessfully',
+  };
+
+
+  try {
+    const result = await expo.sendPushNotificationsAsync([message]);
+    res.status(200).json({
+      status: "success",
+      data: {
+        message: result
+      }
+    })
+  } catch (error) {
+    console.error(error);
+    return next(new AppError('Error sending push notification:', 500))
+  }
+})
+
 exports.createTour = catchAsync(async (req, res, next) => {
   const newTour = await Tour.create(req.body);
-
   res.status(201).json({
     status: 'success',
     data: {
