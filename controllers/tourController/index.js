@@ -48,12 +48,10 @@ exports.getOneTour = catchAsync(async (req, res, next) => {
 })
 
 exports.pushNotification = catchAsync(async (req, res, next) => {
+  // expo push token ExponentPushToken[M56cGsO6ZBhAMLmVna-kOQ] gotten from request body
   const { notificationToken } = req.body
   // Send notification
-  console.log(notificationToken);
   const message = {
-    // expo local -  ExponentPushToken[M56cGsO6ZBhAMLmVna-kOQ]
-
     to: `${notificationToken}`,
     sound: 'default',
     title: 'New Notification',
