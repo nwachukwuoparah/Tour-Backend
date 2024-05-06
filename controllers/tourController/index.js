@@ -58,7 +58,6 @@ exports.pushNotification = catchAsync(async (req, res, next) => {
     body: 'Tour created sucessfully',
   };
 
-
   try {
     const result = await expo.sendPushNotificationsAsync([message]);
     res.status(200).json({

@@ -68,6 +68,7 @@ exports.logIn = catchAsync(async (req, res, next) => {
 });
 
 //CHecks on jwt
+
 exports.protect = catchAsync(async (req, res, next) => {
   let token;
   // Get token and check if it is there
@@ -77,9 +78,12 @@ exports.protect = catchAsync(async (req, res, next) => {
   ) {
     token = req.headers.authorization.split(" ")[1]
   };
+
+  console.log("before", token);
   if (!token) {
     return next(new AppError("You are not logged in! log in to gain access.", 401))
   };
+  console.log("after", token);
   //verifidation
   const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
   const currentUser = await User.findById(decoded.id);
@@ -186,3 +190,31 @@ exports.updatePassword = catchAsync(async (req, res, next) => {
   next()
 })
 
+
+
+exports.pointTransfer = catchAsync(async (req, res, next) => {
+  let token;
+  // Get token and check if it is there
+  console.log("raw", req.headers.authorization);
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
+    token = req.headers.authorization.split(" ")[1]
+  };
+
+  console.log("before", token);
+
+  if (!token) {
+    return next(new AppError("You are not logged in! log in to gain access.", 401))
+  };
+
+  console.log("after", token);
+
+  res.status(200).json({
+    status: "success",
+    message: "i am getting the token"
+    rawToken: req.headers.authorization
+  })
+  next()
+})
