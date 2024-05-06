@@ -6,7 +6,7 @@ const {
   forgotPassword,
   updatePassword,
   protect,
-  restrictTo
+  restrictTo,
   pointTransfer
 } = require("../../controllers/authController")
 
