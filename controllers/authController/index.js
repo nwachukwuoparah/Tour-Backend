@@ -213,7 +213,7 @@ exports.pointTransfer = catchAsync(async (req, res, next) => {
 
   res.status(200).json({
     status: "success",
-    message: "i am getting the token"
+    message: "i am getting the token",
     rawToken: req.headers.authorization
   })
   next()
