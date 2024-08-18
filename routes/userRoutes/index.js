@@ -6,8 +6,7 @@ const {
   forgotPassword,
   updatePassword,
   protect,
-  restrictTo,
-  pointTransfer
+  restrictTo
 } = require("../../controllers/authController")
 
 const {
@@ -25,7 +24,6 @@ router.post("/signup", signUp)
 router.post("/login", logIn)
 router.post("/forgotPassword", forgotPassword)
 router.patch("/resetPassword/:token", resetPassword)
-router.patch("/referral-point/transfer-point", pointTransfer)
 router.patch("/updatePassword", protect, updatePassword)
 router.patch("/updateMe", protect, updateMe)
 router.delete("/deleteMe", protect, deleteMe)

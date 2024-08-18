@@ -1,4 +1,5 @@
 const express = require("express")
+
 const { protect, restrictTo } = require("../../controllers/authController")
 const {
   createTour,
@@ -11,6 +12,8 @@ const {
   getMontlyPlan,
   pushNotification
 } = require("../../controllers/tourController")
+
+
 
 const router = express.Router()
 // router.param("id", checkID)
@@ -37,5 +40,10 @@ router
   .get(getOneTour)
   .patch(updateTour)
   .delete(protect, restrictTo("admin", "lead-guide"), deleteTour)
+
+
+
+
+
 
 module.exports = router;
