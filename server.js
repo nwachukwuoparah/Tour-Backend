@@ -24,8 +24,7 @@ const DB = process.env.DATA_BASE
  
 console.log("run",DB);  
  
-mongoose 
-  .connect(DB, { 
+mongoose.connect(DB, { 
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
